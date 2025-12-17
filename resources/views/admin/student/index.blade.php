@@ -1,57 +1,66 @@
 @extends('layout.Admin')
 
 @section('content')
-<div class="department-list-container">
-    <h2>Department Management</h2>
+<div class="student-list-container">
+    <h2>Student Management</h2>
 
-    {{-- Button to create a new department --}}
-    <a href="{{ route('department.create') }}" class="btn btn-primary create-button">
-        + Create New Department
+    {{-- Button to create a new student --}}
+    <a href="{{ route('student.create') }}" class="btn btn-primary create-button">
+        + Enroll New Student
     </a>
 
     {{-- Start of the Table Area --}}
     <div class="table-responsive mt-3">
 
-        @if (isset($departments) && $departments->count())
+        {{-- Check if students exist --}}
+        @if (isset($students) && $students->count())
 
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Department Name</th>
                         <th>Permanent ID</th>
+                        <th>Name</th>
+                        <th>Date of Birth</th>
+                        <th>Major Department</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @foreach ($departments as $department)
+                    @foreach ($students as $student)
                         <tr>
-                            <td>{{ $department->id }}</td>
-                            <td>{{ $department->name }}</td>
-                            <td>{{ $department->id_permanent }}</td>
+                            <td>{{ $student->id_permanent }}</td>
+                            <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                            <td>
+                                {{ $student->date_of_birth
+                                    ? \Carbon\Carbon::parse($student->date_of_birth)->format('Y-m-d')
+                                    : 'N/A' }}
+                            </td>
+                            <td>
+                                {{ $student->department->name ?? '-' }}
+                            </td>
                             <td>
                                 {{-- View --}}
-                                <a href="{{ route('department.show', $department) }}"
+                                <a href="{{ route('student.show', $student) }}"
                                    class="btn btn-sm btn-info">
                                     View
                                 </a>
 
                                 {{-- Edit --}}
-                                <a href="{{ route('department.edit', $department) }}"
+                                <a href="{{ route('student.edit', $student) }}"
                                    class="btn btn-sm btn-warning">
                                     Edit
                                 </a>
 
                                 {{-- Delete --}}
-                                <form action="{{ route('department.destroy', $department) }}"
+                                <form action="{{ route('student.destroy', $student) }}"
                                       method="POST"
                                       style="display:inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
                                             class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to delete {{ $department->name }}?')">
+                                            onclick="return confirm('Are you sure you want to delete {{ $student->last_name }}?')">
                                         Delete
                                     </button>
                                 </form>
@@ -63,11 +72,10 @@
 
         @else
             <div class="alert alert-info">
-                No departments have been added yet. Click "Create New Department" to begin.
+                No student records found. Click "Enroll New Student" to begin.
             </div>
         @endif
 
     </div>
 </div>
 @endsection
-
