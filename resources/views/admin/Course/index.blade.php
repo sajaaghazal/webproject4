@@ -29,9 +29,7 @@
                         <tr>
                             <td>{{ $course->code }}</td>
                             <td>{{ $course->name }}</td>
-                            <td>
-                                {{ $course->department->name ?? '-' }}
-                            </td>
+                            <td>{{ $course->department->name ?? '-' }}</td>
                             <td>{{ $course->status }}</td>
                             <td>
                                 {{-- View --}}
@@ -47,7 +45,7 @@
                                 </a>
 
                                 {{-- Delete --}}
-                                <form action="{{ route('course.destroy', $course) }}"
+                                <form action="{{ route('course.destroy', $course->id) }}"
                                       method="POST"
                                       style="display:inline-block;">
                                     @csrf
