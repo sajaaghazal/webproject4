@@ -1,73 +1,36 @@
 @extends('layout.Admin')
 
 @section('content')
-<div class="department-list-container">
-    <h2>Department Management</h2>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Department Management</h2>
+        <a href="{{ url('/admin/Department/create') }}" class="btn btn-primary">+ Add New Department</a>
+    </div>
 
-    {{-- Button to create a new department --}}
-    <a href="{{ route('department.create') }}" class="btn btn-primary create-button">
-        + Create New Department
-    </a>
-
-    {{-- Start of the Table Area --}}
-    <div class="table-responsive mt-3">
-
-        @if (isset($departments) && $departments->count())
-
-            <table class="table table-striped">
-                <thead>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-light">
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>Department Name</th>
-                        <th>Permanent ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    @foreach ($departments as $department)
-                        <tr>
-                            <td>{{ $department->id }}</td>
-                            <td>{{ $department->name }}</td>
-                            <td>{{ $department->id_permanent }}</td>
-                            <td>
-                                {{-- View --}}
-                                <a href="{{ route('department.show', $department) }}"
-                                   class="btn btn-sm btn-info">
-                                    View
-                                </a>
-
-                                {{-- Edit --}}
-                                <a href="{{ route('department.edit', $department) }}"
-                                   class="btn btn-sm btn-warning">
-                                    Edit
-                                </a>
-
-                                {{-- Delete --}}
-                                <form action="{{ route('department.destroy', $department) }}"
-                                      method="POST"
-                                      style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to delete {{ $department->name }}?')">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
+                    {{-- This will be populated by your Controller using @foreach --}}
+                    <tr>
+                        <td>1</td>
+                        <td>Computer Science</td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-info text-white">View</a>
+                            <a href="#" class="btn btn-sm btn-warning text-white">Edit</a>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-
-        @else
-            <div class="alert alert-info">
-                No departments have been added yet. Click "Create New Department" to begin.
-            </div>
-        @endif
-
+        </div>
     </div>
 </div>
 @endsection
-
