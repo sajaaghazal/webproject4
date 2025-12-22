@@ -28,6 +28,23 @@
 
                 <tbody>
                     @foreach ($students as $student)
+                    <form 
+    action="{{ route('students.destroy', $student->id) }}" 
+    method="POST" 
+    style="display:inline;"
+>
+    @csrf
+    @method('DELETE')
+
+    <button 
+        type="submit" 
+        class="btn btn-danger btn-sm"
+        onclick="return confirm('Are you sure you want to delete this student?')"
+    >
+        Delete
+    </button>
+</form>
+
                         <tr>
                             <td>{{ $student->id_permanent }}</td>
                             <td>{{ $student->first_name }} {{ $student->last_name }}</td>
