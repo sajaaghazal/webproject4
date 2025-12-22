@@ -35,7 +35,7 @@ class professorController extends Controller
     {
         $input = $request->validate([
             'name'     => ['required'],
-            'email'    => ['required', 'email', 'unique:professors,email'],
+            'email' => ['required', 'email', 'unique:professors,email,' . $professor->id],
             'password' => ['required'],
             'depId'    => ['required', 'exists:departments,id']
         ]);
