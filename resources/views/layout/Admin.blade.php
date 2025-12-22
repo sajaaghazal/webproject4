@@ -32,32 +32,26 @@
     <aside class="sidebar">
         <nav class="menu">
             <a href="/dashboard" class="menu-link active">
-                <span class="menu-icon">dashboard</span>
                 <span class="menu-label">Dashboard</span>
             </a>
 
             <a href="/course" class="menu-link">
-                <span class="menu-icon">courses</span>
                 <span class="menu-label">Courses</span>
             </a>
 
             <a href="/department" class="menu-link">
-                <span class="menu-icon">department</span>
                 <span class="menu-label">Departments</span>
             </a>
 
             <a href="/enrollment" class="menu-link">
-                <span class="menu-icon">enrollment</span>
                 <span class="menu-label">Enrollment</span>
             </a>
 
             <a href="/professor" class="menu-link">
-                <span class="menu-icon">professor</span>
                 <span class="menu-label">Professors</span>
             </a>
 
             <a href="/student" class="menu-link">
-                <span class="menu-icon">student</span>
                 <span class="menu-label">Students</span>
             </a>
         </nav>
