@@ -1,65 +1,35 @@
-@extends('admin.layout')
-
-<!-- @section('title', 'Student Details: ' . $student->last_name) -->
+@extends('layouts.app')
 
 @section('content')
-    <!-- <div class="student-details-container">
-        <h2>Student Details</h2>
-
-        <div class="card">
-            <div class="card-header">
-                <h3>{{ $student->first_name }} {{ $student->last_name }}</h3>
+<div class="container mt-5">
+    <div class="card shadow-sm border p-4 bg-white">
+        <h2 class="mb-3">Student Profile</h2>
+        <hr>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Student Number:</strong> {{ $student->stNo }}</p>
+                <p><strong>Full Name:</strong> {{ $student->name }}</p>
+                <p><strong>Email:</strong> {{ $student->email }}</p>
             </div>
-            <div class="card-body">
-                
-                {{-- Detail Item: Permanent ID --}}
-                <p><strong>Permanent ID:</strong> {{ $student->id_permanent }}</p>
-                
-                {{-- Detail Item: Database ID --}}
-                <p><strong>Database ID:</strong> {{ $student->id }}</p>
-
-                {{-- Detail Item: Date of Birth --}}
-                <p><strong>Date of Birth:</strong> {{ $student->date_of_birth ? \Carbon\Carbon::parse($student->date_of_birth)->format('M d, Y') : 'N/A' }}</p>
-
-                {{-- Detail Item: Department (Assumes relationship exists) --}}
-                <p>
-                    <strong>Major Department:</strong> 
-                    @if ($student->department)
-                        <a href="{{ route('admin.department.details', $student->department) }}">
-                            {{ $student->department->name }} ({{ $student->department->id_permanent }})
-                        </a>
-                    @else
-                        N/A (Department not assigned)
-                    @endif
+            <div class="col-md-6">
+                <p><strong>GPA:</strong> <span class="badge bg-light text-dark border">{{ $student->avg ?? 'N/A' }}</span></p>
+                <p><strong>Status:</strong> 
+                    <span class="badge {{ $student->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                        {{ ucfirst($student->status) }}
+                    </span>
                 </p>
-                
-                {{-- Detail Item: Enrollment Date --}}
-                <p><strong>Enrolled On:</strong> {{ $student->created_at->format('M d, Y') }}</p>
-                
-                {{-- Detail Item: Last Updated --}}
-                <p><strong>Last Updated:</strong> {{ $student->updated_at->format('M d, Y H:i A') }}</p>
-
-            </div>
-            <div class="card-footer">
-                {{-- Action Button: Edit --}}
-                <a href="{{ route('admin.student.edit', $student) }}" class="btn btn-primary">
-                    Edit Student Details
-                </a>
-
-                {{-- Action Button: Back to List --}}
-                <a href="{{ route('admin.student.index') }}" class="btn btn-secondary">
-                    Back to List
-                </a>
-
-                {{-- Action Form: Delete --}}
-                <form action="{{ route('admin.student.destroy', $student) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student record?')">
-                        Delete Student
-                    </button>
-                </form>
             </div>
         </div>
-    </div> -->
+
+        <div class="mt-4 border-top pt-3">
+            <a href="{{ route('student.edit', $student->id) }}" class="btn btn-primary">
+                Edit Profile
+            </a>
+            <a href="{{ route('student.index') }}" class="btn btn-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>
 @endsection

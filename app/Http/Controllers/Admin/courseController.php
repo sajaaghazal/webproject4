@@ -3,65 +3,79 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
+use App\Services\CourseService;
+use App\DTOs\CourseDTO;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    protected $courseService;
+
+    // Connects the Service to the Controller
+    public function __construct(CourseService $courseService)
+    {
+        $this->courseService = $courseService;
+    }
+
+    // 1. Show all courses
     public function index()
     {
-        $courses = Course::all();
+        $courses = $this->courseService->getAll();
         return view('Admin.Course.index', compact('courses'));
     }
 
+    // 2. Show the "Create" form
     public function create()
     {
         return view('Admin.Course.create');
     }
 
+    // 3. Save a new course
     public function store(Request $request)
     {
-        $input = $request->validate([
-            'name'   => ['required', 'unique:courses,name'],
-            'symbol' => ['required', 'unique:courses,symbol'],
-            'unit'   => ['required'], // required now
+        $request->validate([
+            'title' => 'required|string|max:100',
+            'course_code' => 'required|string|max:20',
         ]);
 
-        Course::create($input);
+        $dto = CourseDTO::fromRequest($request);
+        $this->courseService->store($dto);
 
-        return redirect()->route('course.index')
-                         ->with('success', 'Course added successfully!');
+        return redirect()->route('course.index')->with('success', 'Course created!');
     }
 
-    public function show(Course $course)
+    // 4. Show details of one course
+    public function show($id)
     {
-        return view('Admin.Course.details', compact('course'));
+        $course = $this->courseService->find($id);
+        return view('Admin.Course.show', compact('course'));
     }
 
-    public function edit(Course $course)
+    // 5. Show the "Edit" form
+    public function edit($id)
     {
+        $course = $this->courseService->find($id);
         return view('Admin.Course.edit', compact('course'));
     }
 
-    public function update(Request $request, Course $course)
+    // 6. Update the course data
+    public function update(Request $request, $id)
     {
-        $input = $request->validate([
-            'name'   => ['required', "unique:courses,name,{$course->id}"],
-            'symbol' => ['required', "unique:courses,symbol,{$course->id}"],
-            'unit'   => ['required'], // required here too
+        $request->validate([
+            'title' => 'required|string|max:100',
+            'course_code' => 'required|string|max:20',
         ]);
 
-        $course->update($input);
+        $dto = CourseDTO::fromRequest($request, $id);
+        $this->courseService->update($dto);
 
-        return redirect()->route('course.index')
-                         ->with('success', 'Course updated successfully!');
+        return redirect()->route('course.index')->with('success', 'Course updated!');
     }
 
-    public function destroy(Course $course)
+    // 7. Delete a course
+    public function destroy($id)
     {
-        $course->delete();
-
-        return redirect()->route('course.index')
-                         ->with('success', 'Course deleted successfully!');
+        $this->courseService->delete($id);
+        return redirect()->route('course.index')->with('success', 'Course deleted!');
     }
 }

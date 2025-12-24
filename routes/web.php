@@ -70,4 +70,3 @@ Route::get('/contact', [homeController::class,'contact'])->name('home.contact');
 
 Route::get('/adminLogin', [authController::class,'adminLogin'])->name('admin.login');
 Route::post('/adminLogin', [authController::class,'adminCheckLogin'])->name('admin.adminCheckLogin');
-
