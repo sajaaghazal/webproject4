@@ -15,8 +15,9 @@ class CourseService
     public function store(CourseDTO $dto): void
     {
         Course::create([
-            'title' => $dto->title,
-            'course_code' => $dto->course_code,
+            'name'   => $dto->name,
+            'symbol' => $dto->symbol,
+            'unit'   => $dto->unit,
         ]);
     }
 
@@ -30,8 +31,9 @@ class CourseService
         $course = Course::findOrFail($dto->id);
 
         $course->update([
-            'title' => $dto->title,
-            'course_code' => $dto->course_code,
+            'name'   => $dto->name,
+            'symbol' => $dto->symbol,
+            'unit'   => $dto->unit,
         ]);
     }
 

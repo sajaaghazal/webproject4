@@ -1,247 +1,85 @@
 <?php
 
+namespace App\Http\Controllers\Admin; // Make sure this namespace is correct for your folder
+
+
+
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Services\CourseService;
+use App\DTOs\CourseDTO;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    // Temporary storage in session for testing
-    private function getCoursesFromSession()
+    protected $courseService;
+
+    public function __construct(CourseService $courseService)
     {
-        return session('courses', []);
-    }
-    
-    private function saveCoursesToSession($courses)
-    {
-        session(['courses' => $courses]);
+        $this->courseService = $courseService;
     }
 
-    /**
-     * Display a listing of courses.
-     */
     public function index()
     {
-        // Get courses from session
-        $courses = $this->getCoursesFromSession();
-        
-        // Convert all arrays to objects for consistent access
-        $courses = array_map(function($course) {
-            return (object)$course;
-        }, $courses);
-        
-        return view('admin.course.index', compact('courses'));
+        $courses = $this->courseService->getAll();
+        // Make sure this matches your view folder (Admin.Course.index or courses.index)
+        return view('Admin.Course.index', compact('courses'));
     }
 
-    /**
-     * Show the form for creating a new course.
-     */
     public function create()
     {
-        // Dummy departments for dropdown
-        $departments = [
-            (object)['id' => 1, 'name' => 'Computer Science'],
-            (object)['id' => 2, 'name' => 'Mathematics'],
-            (object)['id' => 3, 'name' => 'English'],
-            (object)['id' => 4, 'name' => 'Physics'],
-        ];
-        
-        return view('admin.course.create', compact('departments'));
+        return view('Admin.Course.create');
     }
 
-    /**
-     * Store a newly created course.
-     */
     public function store(Request $request)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'code' => 'required|string|max:20',
-            'title' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'credits' => 'required|integer|min:1|max:6',
-            'department_id' => 'nullable|integer'
+        // 1. Validate using the names in your Model
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'symbol' => 'required|string|max:20',
+            'unit'   => 'required|integer',
         ]);
-        
-        // Get existing courses from session
-        $courses = $this->getCoursesFromSession();
-        
-        // Generate a new ID (find the highest ID and add 1)
-        $newId = 1;
-        if (!empty($courses)) {
-            $ids = array_column($courses, 'id');
-            if (!empty($ids)) {
-                $newId = max($ids) + 1;
-            }
-        }
-        
-        // Create new course as array
-        $newCourse = [
-            'id' => $newId,
-            'code' => $validated['code'],
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'credits' => (int)$validated['credits'],
-            'department_id' => $validated['department_id'] ?? null,
-            'created_at' => now()->toDateTimeString(),
-            'updated_at' => now()->toDateTimeString()
-        ];
-        
-        // Add to courses array
-        $courses[] = $newCourse;
-        
-        // Save to session
-        $this->saveCoursesToSession($courses);
-        
-        // Redirect to index page with success message
-        return redirect()->route('courses.index')
-            ->with('success', 'Course created successfully!');
+
+        // 2. Create the DTO
+        $dto = CourseDTO::fromRequest($request);
+
+        // 3. Save via Service
+        $this->courseService->store($dto);
+
+        // 4. Redirect back to index
+        return redirect()->route('course.index')->with('success', 'Course created successfully!');
     }
 
-    /**
-     * Display the specified course.
-     */
     public function show($id)
     {
-        $courses = $this->getCoursesFromSession();
-        
-        // Find the course
-        $course = null;
-        foreach ($courses as $c) {
-            if ($c['id'] == $id) {
-                $course = (object)$c;
-                break;
-            }
-        }
-        
-        // If not found, redirect to index
-        if (!$course) {
-            return redirect()->route('courses.index')
-                ->with('error', 'Course not found.');
-        }
-        
-        // Add department name
-        if ($course->department_id == 1) {
-            $course->department = (object)['name' => 'Computer Science'];
-        } elseif ($course->department_id == 2) {
-            $course->department = (object)['name' => 'Mathematics'];
-        } elseif ($course->department_id == 3) {
-            $course->department = (object)['name' => 'English'];
-        } else {
-            $course->department = (object)['name' => 'Not assigned'];
-        }
-        
-        // Dummy enrollments
-        $enrollments = [];
-        
-        return view('admin.course.show', compact('course', 'enrollments'));
+        $course = $this->courseService->find($id);
+        return view('Admin.Course.show', compact('course'));
     }
 
-    /**
-     * Show the form for editing the specified course.
-     */
     public function edit($id)
     {
-        $courses = $this->getCoursesFromSession();
-        
-        // Find the course
-        $course = null;
-        foreach ($courses as $c) {
-            if ($c['id'] == $id) {
-                $course = (object)$c;
-                break;
-            }
-        }
-        
-        // If not found, redirect to index
-        if (!$course) {
-            return redirect()->route('courses.index')
-                ->with('error', 'Course not found.');
-        }
-        
-        // Dummy departments for dropdown
-        $departments = [
-            (object)['id' => 1, 'name' => 'Computer Science'],
-            (object)['id' => 2, 'name' => 'Mathematics'],
-            (object)['id' => 3, 'name' => 'English'],
-            (object)['id' => 4, 'name' => 'Physics'],
-        ];
-        
-        return view('admin.course.edit', compact('course', 'departments'));
+        $course = $this->courseService->find($id);
+        return view('Admin.Course.edit', compact('course'));
     }
 
-    /**
-     * Update the specified course.
-     */
     public function update(Request $request, $id)
     {
-        // Validate the request
-        $validated = $request->validate([
-            'code' => 'required|string|max:20',
-            'title' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'credits' => 'required|integer|min:1|max:6',
-            'department_id' => 'nullable|integer'
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'symbol' => 'required|string|max:20',
+            'unit'   => 'required|integer',
         ]);
-        
-        // Get courses from session
-        $courses = $this->getCoursesFromSession();
-        
-        // Find and update the course
-        $found = false;
-        foreach ($courses as &$course) {
-            if ($course['id'] == $id) {
-                $course['code'] = $validated['code'];
-                $course['title'] = $validated['title'];
-                $course['description'] = $validated['description'] ?? null;
-                $course['credits'] = (int)$validated['credits'];
-                $course['department_id'] = $validated['department_id'] ?? null;
-                $course['updated_at'] = now()->toDateTimeString();
-                $found = true;
-                break;
-            }
-        }
-        
-        if (!$found) {
-            return redirect()->route('courses.index')
-                ->with('error', 'Course not found.');
-        }
-        
-        // Save updated courses to session
-        $this->saveCoursesToSession($courses);
-        
-        return redirect()->route('courses.index')
-            ->with('success', 'Course updated successfully!');
+
+        $dto = CourseDTO::fromRequest($request, $id);
+        $this->courseService->update($dto);
+
+        return redirect()->route('course.index')->with('success', 'Course updated!');
     }
 
-    /**
-     * Remove the specified course.
-     */
     public function destroy($id)
     {
-        $courses = $this->getCoursesFromSession();
-        
-        // Find the course index
-        $index = null;
-        foreach ($courses as $i => $course) {
-            if ($course['id'] == $id) {
-                $index = $i;
-                break;
-            }
-        }
-        
-        if ($index === null) {
-            return redirect()->route('courses.index')
-                ->with('error', 'Course not found.');
-        }
-        
-        // Remove the course
-        array_splice($courses, $index, 1);
-        
-        // Save updated courses to session
-        $this->saveCoursesToSession($courses);
-        
-        return redirect()->route('courses.index')
-            ->with('success', 'Course deleted successfully!');
+        $this->courseService->delete($id);
+        return redirect()->route('course.index')->with('success', 'Course deleted!');
     }
 }
