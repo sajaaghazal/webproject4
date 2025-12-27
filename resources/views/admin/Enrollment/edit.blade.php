@@ -1,60 +1,114 @@
 @extends('layout.Admin')
 
+@section('title', 'Edit Enrollment')
+
 @section('content')
-<div class="container mt-4">
-    <h1>Edit Enrollment</h1>
+<div class="enrollments-page">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Enrollment</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('enrollment.index') }}">Enrollments</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('enrollment.show', $enrollment->id) }}">Details</a></li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a href="{{ route('enrollment.show', $enrollment->id) }}" class="btn btn-info me-2">
+                <i class="fas fa-eye me-2"></i>View Details
+            </a>
+            <a href="{{ route('enrollment.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+    </div>
 
-    <form action="{{ route('enrollment.update', $enrollment->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <div class="mb-3">
-            <label for="studentId" class="form-label">Student</label>
-            <select name="studentId" id="studentId" class="form-control">
-                <option value="">Select Student</option>
-                @foreach($students as $student)
-                    <option value="{{ $student->id }}" {{ $enrollment->studentId == $student->id ? 'selected' : '' }}>
-                        {{ $student->name }}
-                    </option>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
                 @endforeach
-            </select>
-            @error('studentId') <small class="text-danger">{{ $message }}</small> @enderror
+            </ul>
         </div>
+    @endif
 
-        <div class="mb-3">
-            <label for="courseId" class="form-label">Course</label>
-            <select name="courseId" id="courseId" class="form-control">
-                <option value="">Select Course</option>
-                @foreach($courses as $course)
-                    <option value="{{ $course->id }}" {{ $enrollment->courseId == $course->id ? 'selected' : '' }}>
-                        {{ $course->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('courseId') <small class="text-danger">{{ $message }}</small> @enderror
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
         </div>
+    @endif
 
-        <div class="mb-3">
-            <label for="professorId" class="form-label">Professor</label>
-            <select name="professorId" id="professorId" class="form-control">
-                <option value="">Select Professor</option>
-                @foreach($professors as $professor)
-                    <option value="{{ $professor->id }}" {{ $enrollment->professorId == $professor->id ? 'selected' : '' }}>
-                        {{ $professor->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('professorId') <small class="text-danger">{{ $message }}</small> @enderror
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form action="{{ route('enrollment.update', $enrollment->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Student</label>
+                        <select name="studentId" class="form-select" required>
+                            <option value="">-- Select Student --</option>
+                            @foreach($students as $student)
+                                <option value="{{ $student->id }}" {{ old('studentId', $enrollment->studentId) == $student->id ? 'selected' : '' }}>
+                                    {{ $student->name }} (ID: {{ $student->id }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Course</label>
+                        <select name="courseId" class="form-select" required>
+                            <option value="">-- Select Course --</option>
+                            @foreach($courses as $course)
+                                <option value="{{ $course->id }}" {{ old('courseId', $enrollment->courseId) == $course->id ? 'selected' : '' }}>
+                                    {{ $course->name }} ({{ $course->code }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Professor</label>
+                        <select name="professorId" class="form-select" required>
+                            <option value="">-- Select Professor --</option>
+                            @foreach($professors as $professor)
+                                <option value="{{ $professor->id }}" {{ old('professorId', $enrollment->professorId) == $professor->id ? 'selected' : '' }}>
+                                    {{ $professor->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Mark (0-100)</label>
+                        <input type="number" name="mark" class="form-control" min="0" max="100" step="0.5" 
+                               value="{{ old('mark', $enrollment->mark) }}" placeholder="e.g., 85.5">
+                        <div class="form-text">Update the mark for this enrollment (0 to 100 scale)</div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <div>
+                        <a href="{{ route('enrollment.show', $enrollment->id) }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <a href="{{ route('enrollment.create') }}" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Add New
+                        </a>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Enrollment
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label for="mark" class="form-label">Mark (optional)</label>
-            <input type="number" name="mark" id="mark" class="form-control" value="{{ $enrollment->mark }}" min="0" max="100">
-            @error('mark') <small class="text-danger">{{ $message }}</small> @enderror
-        </div>
-
-        <button type="submit" class="btn btn-success">Update Enrollment</button>
-        <a href="{{ route('enrollment.index') }}" class="btn btn-secondary">Cancel</a>
-    </form>
+    </div>
 </div>
 @endsection

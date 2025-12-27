@@ -24,8 +24,8 @@ class professorController extends Controller
      */
     public function create()
     {
-        $departments=Department::all();
-        return view('Admin.Professor.create',compact('departments'));
+        $departments = Department::all();
+        return view('Admin.Professor.create', compact('departments'));
     }
 
     /**
@@ -35,13 +35,13 @@ class professorController extends Controller
     {
         $input = $request->validate([
             'name'     => ['required'],
-            'email' => ['required', 'email', 'unique:professors,email,' . $professor->id],
+            'email'    => ['required', 'email', 'unique:professors,email'],
             'password' => ['required'],
             'depId'    => ['required', 'exists:departments,id']
         ]);
 
         // hash password
-        $input['password'] =Hash::make($input['password']);
+        $input['password'] = Hash::make($input['password']);
 
         Professor::create($input);
 
@@ -61,8 +61,8 @@ class professorController extends Controller
      */
     public function edit(Professor $professor)
     {
-       $departments=Department::all();
-        return view('Admin.Professor.edit', compact(['professor','departments']));
+        $departments = Department::all();
+        return view('Admin.Professor.edit', compact(['professor', 'departments']));
     }
 
     /**
@@ -98,5 +98,3 @@ class professorController extends Controller
         return redirect()->route('professor.index')->with('success', 'Professor is deleted successfully');
     }
 }
-
-

@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>@yield('title', 'Admin Dashboard')</title>
 
+    {{-- Bootstrap CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    {{-- Font Awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     {{-- Admin styles --}}
     <link rel="stylesheet" href="{{ asset('storage/CSS/admin.css') }}">
+    
+    <style>
+        /* Additional custom styles */
+        .professors-page {
+            padding: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+        
+        .btn-group .btn {
+            margin-right: 5px;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding-left: 0;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -31,27 +63,27 @@
     <!-- Side Menu -->
     <aside class="sidebar">
         <nav class="menu">
-            <a href="/dashboard" class="menu-link active">
+            <a href="/dashboard" class="menu-link {{ request()->is('dashboard') ? 'active' : '' }}">
                 <span class="menu-label">Dashboard</span>
             </a>
 
-            <a href="/course" class="menu-link">
+            <a href="/course" class="menu-link {{ request()->is('course*') ? 'active' : '' }}">
                 <span class="menu-label">Courses</span>
             </a>
 
-            <a href="/department" class="menu-link">
+            <a href="/department" class="menu-link {{ request()->is('department*') ? 'active' : '' }}">
                 <span class="menu-label">Departments</span>
             </a>
 
-            <a href="/enrollment" class="menu-link">
+            <a href="/enrollment" class="menu-link {{ request()->is('enrollment*') ? 'active' : '' }}">
                 <span class="menu-label">Enrollment</span>
             </a>
 
-            <a href="/professor" class="menu-link">
+            <a href="/professor" class="menu-link {{ request()->is('professor*') ? 'active' : '' }}">
                 <span class="menu-label">Professors</span>
             </a>
 
-            <a href="/student" class="menu-link">
+            <a href="/student" class="menu-link {{ request()->is('student*') ? 'active' : '' }}">
                 <span class="menu-label">Students</span>
             </a>
         </nav>
@@ -67,5 +99,15 @@
         <small>&copy; {{ date('Y') }} UniversityPortal. All rights reserved.</small>
     </footer>
 
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript for confirmations -->
+    <script>
+        // Confirm before delete
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this professor?');
+        }
+    </script>
 </body>
 </html>

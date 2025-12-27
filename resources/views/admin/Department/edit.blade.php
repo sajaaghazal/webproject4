@@ -1,25 +1,49 @@
 @extends('layout.Admin')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+
+    <h2 class="mb-4">Edit Department</h2>
+
     <div class="card shadow-sm col-md-6">
-        <div class="card-header bg-warning text-dark">
-            <h4 class="mb-0">Edit Department</h4>
-        </div>
         <div class="card-body">
-            <form action="#" method="POST">
+
+            <form action="{{ route('department.update', $department->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+
                 <div class="mb-3">
-                    <label for="name" class="form-label">Department Name</label>
-                    <input type="text" name="name" id="name" class="form-control" value="Computer Science" required>
+                    <label class="form-label">Department Name</label>
+                    <input type="text"
+                           name="name"
+                           class="form-control"
+                           value="{{ $department->name }}"
+                           required>
                 </div>
-                <div class="d-flex justify-content-end">
-                    <a href="/admin/Department" class="btn btn-secondary me-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">Update Changes</button>
+
+                <div class="mb-3">
+                    <label class="form-label">Symbol</label>
+                    <input type="text"
+                           name="symbol"
+                           class="form-control"
+                           value="{{ $department->symbol }}"
+                           required>
                 </div>
+
+                <div class="mt-3">
+                    <a href="{{ route('department.index') }}" class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-warning">
+                        Update
+                    </button>
+                </div>
+
             </form>
+
         </div>
     </div>
+
 </div>
 @endsection

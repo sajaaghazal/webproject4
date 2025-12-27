@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class authController extends Controller
 {
 
-public function adminLogin()
+    public function adminLogin()
     {
         return view('Auth.admin');
     }
@@ -26,9 +26,20 @@ public function adminLogin()
         if($admin && Hash::check($credentials['password'],$admin->password))
         {
              Auth::guard('admin')->login($admin);
-             return redirect()->route('dashboard')->with('suceess','Hello'.$admin->name);
+             return redirect()->route('dashboard')->with('success','Hello '.$admin->name);
         }
         return redirect()->back()->with('error','invalid email or password');
+    }
+
+    public function logout(Request $request)
+    {
+        if(Auth::guard('admin')->check())
+        {
+            Auth::guard('admin')->logout();
+        }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 
 }
