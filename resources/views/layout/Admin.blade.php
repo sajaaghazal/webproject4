@@ -38,6 +38,38 @@
             background-color: #f8f9fa;
             border-top: none;
         }
+        
+        /* Logout button styles */
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #e3e3e3;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -46,17 +78,28 @@
     <header class="top-bar">
         <h1 class="app-title">UniversityPortal</h1>
 
-        <div class="profile-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="#e3e3e3">
-                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 
-                31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 
-                31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 
-                156T763-197q-54 54-127 85.5T480-80Zm0-80q53 
-                0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 
-                0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 
-                0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 
-                17t-17 43q0 26 17 43t43 17Z"/>
-            </svg>
+        <div class="profile-section">
+            <!-- Logout Button -->
+            <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+
+            <!-- Profile Icon -->
+            <div class="profile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960" fill="#e3e3e3">
+                    <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 
+                    31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 
+                    31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 
+                    156T763-197q-54 54-127 85.5T480-80Zm0-80q53 
+                    0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 
+                    0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 
+                    0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 
+                    17t-17 43q0 26 17 43t43 17Z"/>
+                </svg>
+            </div>
         </div>
     </header>
 
@@ -108,6 +151,18 @@
         function confirmDelete() {
             return confirm('Are you sure you want to delete this professor?');
         }
+        
+        // Optional: Confirm logout
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutForm = document.querySelector('form[action*="logout"]');
+            if (logoutForm) {
+                logoutForm.addEventListener('submit', function(e) {
+                    if (!confirm('Are you sure you want to logout?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
